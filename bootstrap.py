@@ -2,14 +2,12 @@ import os
 from datetime import datetime
 import pg
 
-db_table = os.environ['OPENSHIFT_APP_NAME']
-
-db = pg.connect(db_table, \
-     os.environ['OPENSHIFT_POSTGRESQL_DB_HOST'], \
-     int(os.environ['OPENSHIFT_POSTGRESQL_DB_PORT']), \
+db = pg.connect(app.config['APP_NAME'], \
+     app.config['PG_DB_HOST'], \
+     app.config['PG_DB_PORT'], \
      None, None, \
-     os.environ['OPENSHIFT_POSTGRESQL_DB_USERNAME'], \
-     os.environ['OPENSHIFT_POSTGRESQL_DB_PASSWORD'] )
+     app.config['PG_DB_USERNAME'], \
+     app.config['PG_DB_PASSWORD'] )
 
 try:
     db.query("CREATE EXTENSION postgis;")

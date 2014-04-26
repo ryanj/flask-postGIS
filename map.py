@@ -9,14 +9,12 @@ app = Flask(__name__)
 app.config.from_pyfile('map.cfg')
 print dir(app.config)
 
-table_name = os.environ['OPENSHIFT_APP_NAME']
-
-db = pg.connect(table_name, \
-     os.environ['OPENSHIFT_POSTGRESQL_DB_HOST'], \
-     int(os.environ['OPENSHIFT_POSTGRESQL_DB_PORT']), \
+db = pg.connect(app.config['APP_NAME'], \
+     app.config['PG_DB_HOST'], \
+     app.config['PG_DB_PORT'], \
      None, None, \
-     os.environ['OPENSHIFT_POSTGRESQL_DB_USERNAME'], \
-     os.environ['OPENSHIFT_POSTGRESQL_DB_PASSWORD'] )
+     app.config['PG_DB_USERNAME'], \
+     app.config['PG_DB_PASSWORD'] )
 
 @app.route('/')
 def index():

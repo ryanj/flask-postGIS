@@ -7,11 +7,13 @@
 #
 import imp
 import os
+import sys
 
 try:
-   virtenv = os.environ['OPENSHIFT_PYTHON_DIR'] + '/virtenv/'
-   os.environ['PYTHON_EGG_CACHE'] = os.path.join(virtenv, 'lib/python2.6/site-packages')
-   virtualenv = os.path.join(virtenv, 'bin/activate_this.py')
+   virtenv = os.path.join(os.environ.get('OPENSHIFT_PYTHON_DIR','.'), 'virtenv')
+   python_version = "python"+str(sys.version_info[0])+"."+str(sys.version_info[1]) 
+   os.environ['PYTHON_EGG_CACHE'] = os.path.join(virtenv, 'lib', python_version, 'site-packages')
+   virtualenv = os.path.join(virtenv, 'bin','activate_this.py')
    execfile(virtualenv, dict(__file__=virtualenv))
 except IOError:
    pass
@@ -26,12 +28,14 @@ except IOError:
 #  main():
 #
 if __name__ == '__main__':
-   ip   = os.environ['OPENSHIFT_PYTHON_IP']
-   port = int(os.environ['OPENSHIFT_PYTHON_PORT'])
    map = imp.load_source('app', 'map.py')
+   port = map.app.config['PORT']
+   ip = map.app.config['IP']
+   app_name = map.app.config['APP_NAME']
+   host_name = map.app.config['HOST_NAME']
 
    fwtype="wsgiref"
-   for fw in ("gevent", "cherrypy"):
+   for fw in ("gevent", "cherrypy", "flask"):
       try:
          imp.find_module(fw)
          fwtype = fw
@@ -46,8 +50,14 @@ if __name__ == '__main__':
    elif fwtype == "cherrypy":
       from cherrypy import wsgiserver
       server = wsgiserver.CherryPyWSGIServer(
-         (ip, port), map.app, server_name=os.environ['OPENSHIFT_APP_DNS'])
+         (ip, port), map.app, server_name=host_name)
       server.start()
+
+   elif fwtype == "flask":
+      from flask import Flask
+      server = Flask(__name__)
+      server.wsgi_app = map.app
+      server.run(host=ip, port=port)
 
    else:
       from wsgiref.simple_server import make_server
