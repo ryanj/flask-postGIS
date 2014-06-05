@@ -23,6 +23,7 @@ def index():
 #return all parks:
 @app.route("/parks")
 def parks():
+    table_name = app.config['APP_NAME']
     #query the DB for all the parkpoints
     result = db.query('SELECT gid,name,ST_X(the_geom) as lon,ST_Y(the_geom) as lat FROM '+ table_name+";")
 
@@ -32,6 +33,7 @@ def parks():
 #bounding box (within?lat1=45.5&lon1=-82&lat2=46.5&lon2=-81)
 @app.route("/parks/within")
 def within():
+    table_name = app.config['APP_NAME']
     #get the request parameters
     lat1 = str(request.args.get('lat1'))
     lon1 = str(request.args.get('lon1'))

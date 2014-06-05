@@ -1,6 +1,10 @@
 import os
 from datetime import datetime
+from flask import Flask
 import pg
+
+app = Flask(__name__)
+app.config.from_pyfile('map.cfg')
 
 db = pg.connect(app.config['APP_NAME'], \
      app.config['PG_DB_HOST'], \
@@ -10,6 +14,7 @@ db = pg.connect(app.config['APP_NAME'], \
      app.config['PG_DB_PASSWORD'] )
 
 try:
+    db_table = app.config['APP_NAME']
     db.query("CREATE EXTENSION postgis;")
     print("bootstrapping database with National Parks data.")
 
