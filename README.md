@@ -1,6 +1,9 @@
 # Map of US National Parks
 *powered by Flask, PostGIS, and Leaflet maps*
 
+## OpenShift Hosting
+[![Build Status](https://build-shifter.rhcloud.com/buildStatus/icon?job=parkgis-build)](http://parkgis-shifter.rhcloud.com/)
+
 To deploy a clone of this application using the [`rhc` command line tool](http://rubygems.org/gems/rhc):
 
     rhc app create parks python-2.6 postgresql-9.2 --from-code=https://github.com/ryanj/flask-postGIS.git
